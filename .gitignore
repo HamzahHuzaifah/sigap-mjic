@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.env
+.DS_Store
+*.log
+
+# Prisma
+/sigap-backend/prisma/dev.db
+/sigap-backend/prisma/dev.db-journal
+
+# Frontend
+/sigap-frontend/dist/
+/sigap-frontend/dist-ssr/
+/sigap-frontend/*.local
