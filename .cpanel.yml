@@ -1,18 +1,24 @@
 ---
 deployment:
   tasks:
-    # 1. Pastikan path ini sesuai dengan path di cPanel Anda
-    - export FRONTEND_DIR=/home/USER_CPANEL/public_html
-    - export BACKEND_DIR=/home/USER_CPANEL/sigap-backend
+    # 1. Konfigurasi Direktori (Ganti mjir4837 atau nama folder jika berbeda)
+    # FRONTEND_DIR: lokasi folder web publik (misal: /home/mjir4837/sigap.mjic.sch.id atau /home/mjir4837/public_html)
+    # BACKEND_DIR: lokasi folder aplikasi Node.js (misal: /home/mjir4837/sigap-backend)
+    - export CPANEL_USER=mjir4837
+    - export FRONTEND_DIR=/home/$CPANEL_USER/public_html/sigap
+    - export BACKEND_DIR=/home/$CPANEL_USER/sigap-backend
 
-    # 2. Deploy Frontend
-    - cd sigap-frontend && npm install
-    - cd sigap-frontend && npm run build
+    # 2. Build & Deploy Frontend (React SPA)
+    - /bin/mkdir -p $FRONTEND_DIR
+    - cd sigap-frontend && npm install && npm run build
     - /bin/cp -R sigap-frontend/dist/* $FRONTEND_DIR/
+    - /bin/cp -f sigap-frontend/public/.htaccess $FRONTEND_DIR/
 
-    # 3. Deploy Backend
+    # 3. Deploy & Build Backend (Node.js + Prisma)
     - /bin/mkdir -p $BACKEND_DIR
     - /bin/cp -R sigap-backend/* $BACKEND_DIR/
-    - cd $BACKEND_DIR && npm install --production
+    - cd $BACKEND_DIR && npm install
     - cd $BACKEND_DIR && npm run build
     - cd $BACKEND_DIR && npx prisma generate
+    - /bin/mkdir -p $BACKEND_DIR/tmp
+    - /bin/touch $BACKEND_DIR/tmp/restart.txt

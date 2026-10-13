@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { LayoutDashboard, ClipboardCheck, FileEdit, Printer, Bell, School, LogOut } from 'lucide-react';
 
 interface LayoutProps {
