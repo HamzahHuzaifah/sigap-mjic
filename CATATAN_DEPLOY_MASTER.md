@@ -135,3 +135,24 @@ Setiap kali Anda selesai menambah fitur baru di komputer lokal:
    ```
 3. **Di Browser:**
    Buka web lalu tekan **Ctrl + F5** (Hard Refresh).
+
+---
+
+## ⚡ 6. Otomatisasi dengan Script `restart-server.sh`
+
+Di proyek **KKN Vidya Vardhana**, kita menggunakan script `restart-server.sh`. Sekarang, di **SIGAP MJIC**, kita juga sudah menyediakan script `restart-server.sh` serupa!
+
+### Cara Pakai di Terminal cPanel:
+```bash
+cd ~/repositories/sigap-mjic
+bash restart-server.sh
+```
+
+### Apa yang Dilakukan Script Ini Secara Otomatis:
+1. Menarik commit terbaru dari GitHub (`git fetch` & `git reset --hard origin/main`).
+2. Memeriksa keberadaan `node_modules`.
+3. Memastikan bundle frontend di `sigap-backend/public/` memiliki izin baca yang tepat (`chmod 755`).
+4. Membersihkan zombie process (`pkill -9 -u mjir4837 node`).
+5. Memperbarui `tmp/restart.txt` untuk memicu reload Phusion Passenger.
+6. Mengetes respons HTTP endpoint API (`https://sigap.mjic.sch.id/api/students`).
+
