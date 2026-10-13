@@ -9,7 +9,7 @@ node_modules/
 /sigap-backend/prisma/dev.db
 /sigap-backend/prisma/dev.db-journal
 
-# Frontend
-/sigap-frontend/dist/
+# Frontend dist di-push agar cPanel langsung bisa menampilkan web tanpa build frontend di server
+!/sigap-frontend/dist/
 /sigap-frontend/dist-ssr/
 /sigap-frontend/*.local
