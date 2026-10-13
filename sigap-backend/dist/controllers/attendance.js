@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createAttendance = void 0;
-const prisma_1 = require("../lib/prisma");
+const db_1 = require("../lib/db");
 const createAttendance = async (req, res) => {
     try {
         const { date, status, studentId } = req.body;
@@ -9,14 +9,14 @@ const createAttendance = async (req, res) => {
             res.status(400).json({ error: 'Missing required fields' });
             return;
         }
-        const newAttendance = await prisma_1.prisma.attendance.create({
-            data: {
-                date: new Date(date),
-                status,
-                studentId,
-            },
+        const attendanceDate = new Date(date);
+        const result = await (0, db_1.query)('INSERT INTO Attendance (date, status, studentId, createdAt, updatedAt) VALUES (?, ?, ?, NOW(), NOW()) ON DUPLICATE KEY UPDATE status = VALUES(status), updatedAt = NOW()', [attendanceDate, status, parseInt(studentId, 10)]);
+        res.status(201).json({
+            id: result.insertId,
+            date: attendanceDate,
+            status,
+            studentId: parseInt(studentId, 10),
         });
-        res.status(201).json(newAttendance);
     }
     catch (error) {
         console.error('Error creating attendance:', error);

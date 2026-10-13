@@ -1,11 +1,9 @@
 import { Request, Response } from 'express';
-import { prisma } from '../lib/prisma';
+import { query } from '../lib/db';
 
 export const getAllSubjects = async (req: Request, res: Response): Promise<void> => {
   try {
-    const subjects = await prisma.subject.findMany({
-      orderBy: { name: 'asc' }
-    });
+    const subjects = await query('SELECT * FROM Subject ORDER BY name ASC');
     res.status(200).json(subjects);
   } catch (error) {
     console.error('Error fetching subjects:', error);

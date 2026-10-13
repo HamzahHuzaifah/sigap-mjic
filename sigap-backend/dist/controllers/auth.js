@@ -6,8 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.login = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const prisma_1 = require("../lib/prisma");
-// Use a secure key in production (from .env)
+const db_1 = require("../lib/db");
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-sigap-key';
 const login = async (req, res) => {
     try {
@@ -16,9 +15,8 @@ const login = async (req, res) => {
             res.status(400).json({ error: 'Username and password are required' });
             return;
         }
-        const user = await prisma_1.prisma.user.findUnique({
-            where: { username },
-        });
+        const rows = await (0, db_1.query)('SELECT * FROM User WHERE username = ? LIMIT 1', [username]);
+        const user = rows[0];
         if (!user) {
             res.status(401).json({ error: 'Invalid credentials' });
             return;
@@ -36,8 +34,8 @@ const login = async (req, res) => {
                 id: user.id,
                 username: user.username,
                 name: user.name,
-                role: user.role
-            }
+                role: user.role,
+            },
         });
     }
     catch (error) {

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { prisma } from '../lib/prisma';
+import { query } from '../lib/db';
 
 export const createAttendance = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -10,15 +10,18 @@ export const createAttendance = async (req: Request, res: Response): Promise<voi
       return;
     }
 
-    const newAttendance = await prisma.attendance.create({
-      data: {
-        date: new Date(date),
-        status,
-        studentId,
-      },
-    });
+    const attendanceDate = new Date(date);
+    const result: any = await query(
+      'INSERT INTO Attendance (date, status, studentId, createdAt, updatedAt) VALUES (?, ?, ?, NOW(), NOW()) ON DUPLICATE KEY UPDATE status = VALUES(status), updatedAt = NOW()',
+      [attendanceDate, status, parseInt(studentId, 10)]
+    );
 
-    res.status(201).json(newAttendance);
+    res.status(201).json({
+      id: result.insertId,
+      date: attendanceDate,
+      status,
+      studentId: parseInt(studentId, 10),
+    });
   } catch (error) {
     console.error('Error creating attendance:', error);
     res.status(500).json({ error: 'Internal server error' });

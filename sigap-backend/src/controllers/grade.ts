@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { prisma } from '../lib/prisma';
+import { query } from '../lib/db';
 
 export const createGrade = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -10,16 +10,18 @@ export const createGrade = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    const newGrade = await prisma.grade.create({
-      data: {
-        score,
-        type,
-        studentId,
-        subjectId,
-      },
-    });
+    const result: any = await query(
+      'INSERT INTO Grade (score, type, studentId, subjectId, createdAt, updatedAt) VALUES (?, ?, ?, ?, NOW(), NOW())',
+      [parseFloat(score), type, parseInt(studentId, 10), parseInt(subjectId, 10)]
+    );
 
-    res.status(201).json(newGrade);
+    res.status(201).json({
+      id: result.insertId,
+      score: parseFloat(score),
+      type,
+      studentId: parseInt(studentId, 10),
+      subjectId: parseInt(subjectId, 10),
+    });
   } catch (error) {
     console.error('Error creating grade:', error);
     res.status(500).json({ error: 'Internal server error' });

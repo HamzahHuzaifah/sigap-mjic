@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { prisma } from '../lib/prisma';
+import { query } from '../lib/db';
 
-// Use a secure key in production (from .env)
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-sigap-key';
 
 export const login = async (req: Request, res: Response): Promise<void> => {
@@ -15,9 +14,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const user = await prisma.user.findUnique({
-      where: { username },
-    });
+    const rows: any = await query('SELECT * FROM User WHERE username = ? LIMIT 1', [username]);
+    const user = rows[0];
 
     if (!user) {
       res.status(401).json({ error: 'Invalid credentials' });
@@ -43,8 +41,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         id: user.id,
         username: user.username,
         name: user.name,
-        role: user.role
-      }
+        role: user.role,
+      },
     });
   } catch (error) {
     console.error('Login error:', error);

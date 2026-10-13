@@ -1,12 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllSubjects = void 0;
-const prisma_1 = require("../lib/prisma");
+const db_1 = require("../lib/db");
 const getAllSubjects = async (req, res) => {
     try {
-        const subjects = await prisma_1.prisma.subject.findMany({
-            orderBy: { name: 'asc' }
-        });
+        const subjects = await (0, db_1.query)('SELECT * FROM Subject ORDER BY name ASC');
         res.status(200).json(subjects);
     }
     catch (error) {

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createGrade = void 0;
-const prisma_1 = require("../lib/prisma");
+const db_1 = require("../lib/db");
 const createGrade = async (req, res) => {
     try {
         const { score, type, studentId, subjectId } = req.body;
@@ -9,15 +9,14 @@ const createGrade = async (req, res) => {
             res.status(400).json({ error: 'Missing required fields' });
             return;
         }
-        const newGrade = await prisma_1.prisma.grade.create({
-            data: {
-                score,
-                type,
-                studentId,
-                subjectId,
-            },
+        const result = await (0, db_1.query)('INSERT INTO Grade (score, type, studentId, subjectId, createdAt, updatedAt) VALUES (?, ?, ?, ?, NOW(), NOW())', [parseFloat(score), type, parseInt(studentId, 10), parseInt(subjectId, 10)]);
+        res.status(201).json({
+            id: result.insertId,
+            score: parseFloat(score),
+            type,
+            studentId: parseInt(studentId, 10),
+            subjectId: parseInt(subjectId, 10),
         });
-        res.status(201).json(newGrade);
     }
     catch (error) {
         console.error('Error creating grade:', error);
