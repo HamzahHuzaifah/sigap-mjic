@@ -16,14 +16,32 @@ app.use(express_1.default.json());
 // API routes
 app.use('/api', routes_1.default);
 // Serve Frontend (React SPA)
-const frontendDist = path_1.default.resolve(__dirname, '../../sigap-frontend/dist');
-if (fs_1.default.existsSync(frontendDist)) {
+const candidateDirs = [
+    path_1.default.resolve(__dirname, '../public'),
+    path_1.default.resolve(__dirname, '../../sigap-frontend/dist'),
+    path_1.default.resolve(process.cwd(), 'public'),
+    path_1.default.resolve(process.cwd(), '../sigap-frontend/dist'),
+];
+let frontendDist = '';
+for (const dir of candidateDirs) {
+    if (fs_1.default.existsSync(path_1.default.join(dir, 'index.html'))) {
+        frontendDist = dir;
+        break;
+    }
+}
+if (frontendDist) {
+    console.log(`[frontend]: Serving frontend from ${frontendDist}`);
     app.use(express_1.default.static(frontendDist));
     app.get('*', (req, res, next) => {
         if (req.path.startsWith('/api')) {
             return next();
         }
         res.sendFile(path_1.default.join(frontendDist, 'index.html'));
+    });
+}
+else {
+    app.get('/', (req, res) => {
+        res.status(404).send(`SIGAP Backend is running. Frontend build not found in: ${candidateDirs.join(', ')}`);
     });
 }
 app.listen(port, () => {
