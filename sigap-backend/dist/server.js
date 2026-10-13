@@ -32,11 +32,12 @@ for (const dir of candidateDirs) {
 if (frontendDist) {
     console.log(`[frontend]: Serving frontend from ${frontendDist}`);
     app.use(express_1.default.static(frontendDist));
-    app.get('*', (req, res, next) => {
-        if (req.path.startsWith('/api')) {
-            return next();
+    // Express 5 compatible SPA fallback
+    app.use((req, res, next) => {
+        if (req.method === 'GET' && !req.path.startsWith('/api')) {
+            return res.sendFile(path_1.default.join(frontendDist, 'index.html'));
         }
-        res.sendFile(path_1.default.join(frontendDist, 'index.html'));
+        next();
     });
 }
 else {
