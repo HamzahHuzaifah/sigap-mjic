@@ -14,11 +14,9 @@ deployment:
     - /bin/cp -R sigap-frontend/dist/* $FRONTEND_DIR/
     - /bin/cp -f sigap-frontend/public/.htaccess $FRONTEND_DIR/
 
-    # 3. Deploy & Build Backend (Node.js + Prisma)
+    # 3. Deploy Backend (Pre-built Node.js)
     - /bin/mkdir -p $BACKEND_DIR
     - /bin/cp -R sigap-backend/* $BACKEND_DIR/
-    - cd $BACKEND_DIR && npm install
-    - cd $BACKEND_DIR && npm run build
-    - cd $BACKEND_DIR && npx prisma generate
+    - cd $BACKEND_DIR && npm install --omit=dev
     - /bin/mkdir -p $BACKEND_DIR/tmp
     - /bin/touch $BACKEND_DIR/tmp/restart.txt

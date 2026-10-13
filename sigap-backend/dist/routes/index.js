@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const grade_1 = require("../controllers/grade");
+const attendance_1 = require("../controllers/attendance");
+const student_1 = require("../controllers/student");
+const subject_1 = require("../controllers/subject");
+const auth_1 = require("../controllers/auth");
+const router = (0, express_1.Router)();
+router.post('/login', auth_1.login);
+router.get('/students', student_1.getAllStudents);
+router.get('/subjects', subject_1.getAllSubjects);
+router.post('/grades', grade_1.createGrade);
+router.post('/attendances', attendance_1.createAttendance);
+router.get('/students/:id/summary', student_1.getStudentSummary);
+exports.default = router;
