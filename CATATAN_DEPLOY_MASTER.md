@@ -87,7 +87,8 @@ Express Backend menyajikan file statis React Frontend sekaligus menyediakan API:
 * **Solusi Instan:**
   ```bash
   # Bunuh semua proses node milik user Anda
-  pkill -9 -u NAMA_USER_CPANEL node
+  # JANGAN gunakan pkill -u (membunuh semua web lain di akun yang sama)
+  pkill -9 -f "NAMA_APLIKASI" 2>/dev/null || true
   # Paksa Passenger reload
   touch tmp/restart.txt
   ```
@@ -152,7 +153,7 @@ bash restart-server.sh
 1. Menarik commit terbaru dari GitHub (`git fetch` & `git reset --hard origin/main`).
 2. Memeriksa keberadaan `node_modules`.
 3. Memastikan bundle frontend di `sigap-backend/public/` memiliki izin baca yang tepat (`chmod 755`).
-4. Membersihkan zombie process (`pkill -9 -u mjir4837 node`).
+4. Membersihkan zombie process (`pkill -9 -f "sigap-backend" 2>/dev/null || true`).
 5. Memperbarui `tmp/restart.txt` untuk memicu reload Phusion Passenger.
 6. Mengetes respons HTTP endpoint API (`https://sigap.mjic.sch.id/api/students`).
 

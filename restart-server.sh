@@ -53,7 +53,9 @@ run_deploy() {
   echo ""
   echo "[4/4] 🔄 Merestart Phusion Passenger / Node.js..."
   # Matikan ghost/zombie node processes milik user mjir4837
-  pkill -9 -u mjir4837 node 2>/dev/null || true
+  # Matikan hanya proses SIGAP secara spesifik tanpa menyentuh SPMB dan SIKMA
+  pkill -9 -f "sigap-backend" 2>/dev/null || true
+  ps ux | grep 'sigap-backend' | grep -v grep | awk '{print $2}' | xargs -r kill -9 2>/dev/null || true
 
   # Trigger Phusion Passenger untuk memuat ulang kode baru
   mkdir -p sigap-backend/tmp
